@@ -39,7 +39,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
     plugins: [
       new CopyWebpackPlugin([
         {
-          context: path.resolve(__dirname, `examples/themes`),
+          context: path.resolve(__dirname, `src/themes`),
           from: {
             glob: '**/res/*',
             dot: true
@@ -505,9 +505,32 @@ Component1.vue
 
 
 
+
 程序运行时，Page2的ThemeRender会到当前主题查找__component参数对应的组件（Component1）并渲染，如果在当前主题找不到这个组件，则渲染默认的Component1。
 
-你可以在theme1中添加这个Component1组件：
+
+
+修改App.vue
+
+```
+<template>
+  <div id="app">
+    <Page2/>
+  </div>
+</template>
+
+<script>
+import Page2 from './components/Page2'
+export default {
+  name: 'App',
+  components:  {
+    Page2
+  }
+}
+</script>
+...
+```
+可以看到，这里并没有使用ThemeRender来渲染Page2，因为Page2仅仅是里面的Component1需要做多主题，你可以在theme1中添加这个Component1组件：
 
 themes/theme1/components/Component1.vue
 ```
@@ -597,7 +620,27 @@ export default {
 </style>
 ```
 
-在项目的public中添加page3Background.jpg文件，运行效果：
+修改App.vue
+
+```
+<template>
+  <div id="app">
+    <Page3/>
+  </div>
+</template>
+
+<script>
+import Page3 from './components/Page3'
+export default {
+  name: 'App',
+  components:  {
+    Page3
+  }
+}
+</script>
+...
+```
+可以看到这里也没有用ThemeRender来渲染Page3，因为我们仅仅是通过themeOptions来设置style中的backgroundImage，从而达到多主题效果，在项目的public中添加page3Background.jpg文件，运行效果：
 
 ![](documents/images/09.png)
 
@@ -615,17 +658,23 @@ export default {
 }
 ```
 
+同时在themes/theme1/res中放入对应文件，将themeName改成theme1即可
+
 **注意这里的路径的写法，不能直接使用相对路径，因为编译时，会将/themes/theme1/res/中的文件原封不动的复制到dist目录中的对应位置。**
 
 **也因此添加图片后需要重新编译一下**
 
-同时在themes/theme1/res中放入对应文件即可，运行效果
+运行效果
 
 ![](documents/images/10.png)
 
 # 五、与Vue-Router配合使用
 
 我们已经创建了页面多主题的Home.vue、页面中部分组件多题的Page2.vue、以及通过主题参数实现多主题的Page3.vue;接下来我们要通过router把它们串起来，方便看整体效果。
+
+```
+npm install vue-router -S
+```
 
 
 在这里插件为需要直接在route.js中配置多主题的页面提供了themeRouteProps方法，具体用法如下：
@@ -642,6 +691,42 @@ export default [
     {path: '/page2', name:'page2', component: Page2},
     {path: '/page3', name:'page3', component: Page3},
 ];
+```
+
+main.js
+```
+...
+import VueRouter from 'vue-router'
+import routes from './routes'
+...
+Vue.use(VueRouter)
+
+const router = new VueRouter({
+  mode: 'history',
+  routes
+})
+
+new Vue({
+  render: h => h(App),
+  router
+}).$mount('#app')
+...
+```
+
+App.vue
+
+```
+<template>
+  <div id="app">
+    <router-view/>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App',
+}
+</script>
 ```
 
 * Home在不同主题中都有定义，因此这里使用了ThemeRender来渲染，themeRouteProps的第一个参数是在当前主题中查找Home组件(对应\__component)，第二个参数是如果没找到第一个参数在主题中的组件时，要渲染的默认组件(对应\__default)，第三个参为其它props（如果有的话）
@@ -715,6 +800,14 @@ li a {
 }
 </style>
 
+```
+
+将Header注册成全局的
+main.js
+```
+import Header from './components/Header'
+...
+Vue.component('Header', Header)
 ```
 
 分别把这个Header.vue添加到Home、Page2和Page3中,最终效果
