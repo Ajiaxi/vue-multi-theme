@@ -4,7 +4,7 @@
  * @description 当在主题中找到__component对应的组件实例时，渲染该组件；否则，渲染__default指定的组件
  * 
  * @param {string} __component 要渲染的页面组件的名称
- * @param {function} __default 如果在主题找不到__component组件时，默认渲染的组件，示例：() => import('@/pages/Home.vue'))
+ * @param {function} __default 如果在主题找不到__component组件时，默认渲染的组件
  * @param {Object} __props 要传递给组件的其它参数，一般用不上
  */
 export default (__component, __default, __props = null) => {
