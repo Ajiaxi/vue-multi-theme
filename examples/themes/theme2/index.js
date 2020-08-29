@@ -1,0 +1,10 @@
+export default {
+    components: {
+        Home: () => import('./components/Home'),
+        Component1: () => import('./components/Component1'),
+	},
+    options: {
+        cnName: '仅修改默认Home的template',
+        page3Background: 'url(/themes/theme2/res/page3background.jpg)'
+    }
+}
