@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import themeWebpackContextPaser from 'vue-multi-theme/themeWebpackContextPaser'
+import {themeWebpackContextPaser} from 'vue-multi-theme'
 const themeConfigs = themeWebpackContextPaser(require.context(
     '../themes',
     true,

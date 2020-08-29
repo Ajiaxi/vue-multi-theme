@@ -7,7 +7,7 @@ import ThemeRender from './ThemeRender'
 import themeRouteProps from './themeRouteProps'
 import themeWebpackContextPaser from './themeWebpackContextPaser'
 
-export {themeRouteProps, ThemeRender}
+export {ThemeRender, themeRouteProps, themeWebpackContextPaser}
 
 export default {
     installed: false,

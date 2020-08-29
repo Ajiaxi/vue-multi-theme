@@ -32,6 +32,7 @@ npm install vue-multi-theme -S
 ## Step2 webpack配置
 
 ```
+const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 ...
 {
@@ -51,13 +52,21 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 }
 ```
 
+**注意这里的examples/themes以你实际的目录为准**
+
 若提示没有安装copy-webpack-plugin，请执行以下命令安装
 
 ```
 npm install --save-dev copy-webpack-plugin
 ```
 
-## Step3 注册插件
+## Step3 添加主题主目录
+
+在main.js所在的目录添加themes目录
+
+![](documents/images/00.png)
+
+## Step4 注册插件
 
 main.js
 
@@ -104,7 +113,6 @@ Home.vue内容如下：
 ```
 <template>
   <div>
-    <Header/>
     <h1>默认界面：{{msg}} 当前主题 {{themeOptions.name}} {{themeOptions.cnName}}</h1>
     <button @click="btnClick">按钮1</button>
     <slot></slot>
@@ -167,7 +175,7 @@ export default {
 
 ## Step 1 创建主题目录
 
-在main.js同目录创建themes目录，然后在themes目录下创建第一个主题目录，其结构如下：
+在themes目录下创建第一个主题目录，其结构如下：
 
 ```
 ├── main.js
@@ -322,7 +330,6 @@ h1 {
 ```
 <template>
   <div>
-    <Header/>
     <h3>你好，我是主题 {{themeOptions.name}} 的Home</h3>
     <div class="content">
       <div>我长得和默认的Home完全不一样</div>
@@ -439,7 +446,6 @@ Page2.vue
 ```
 <template>
   <div>
-    <Header/>
     <div>页面2</div>
     <ThemeRender __component="Component1" :__default="component1()">
       <div class="sub-com">子DIV</div>
@@ -480,6 +486,11 @@ Component1.vue
     </div>
 </template>
 
+<script>
+    export default {
+    }
+</script>
+
 <style scoped>
 .com1 {
     color: white;
@@ -498,7 +509,7 @@ Component1.vue
 
 你可以在theme1中添加这个Component1组件：
 
-themes/components/Component1.vue
+themes/theme1/components/Component1.vue
 ```
 <template>
     <div class="com1">
@@ -506,6 +517,11 @@ themes/components/Component1.vue
         <slot></slot>
     </div>
 </template>
+
+<script>
+    export default {
+    }
+</script>
 
 <style scoped>
 .com1 {
@@ -555,7 +571,6 @@ Page3.vue
 ```
 <template>
   <div>
-    <Header/>
     <div class="page3" :style="{backgroundImage:themeOptions.page3Background}">
     </div>
     <h3>各主题并没有单独定义这个页面（使用默认页面组件），仅仅通过主题的参数page3Background让不同主题有不同背景</h3>
@@ -601,6 +616,8 @@ export default {
 ```
 
 **注意这里的路径的写法，不能直接使用相对路径，因为编译时，会将/themes/theme1/res/中的文件原封不动的复制到dist目录中的对应位置。**
+
+**也因此添加图片后需要重新编译一下**
 
 同时在themes/theme1/res中放入对应文件即可，运行效果
 
@@ -651,7 +668,7 @@ Header.vue
 </template>
 
 <script>
-import themeWebpackContextPaser from 'vue-multi-theme/themeWebpackContextPaser'
+import {themeWebpackContextPaser} from 'vue-multi-theme'
 const themeConfigs = themeWebpackContextPaser(require.context(
     '../themes',
     true,

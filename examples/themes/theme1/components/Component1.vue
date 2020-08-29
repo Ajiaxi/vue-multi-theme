@@ -5,6 +5,11 @@
     </div>
 </template>
 
+<script>
+    export default {
+    }
+</script>
+
 <style scoped>
 .com1 {
     color: white;
