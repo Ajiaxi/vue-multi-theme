@@ -5,6 +5,6 @@ export default {
 	},
     options: {
         cnName: '重定义按钮的行为',
-        page3Background: 'url(/themes/theme3/res/page3background.jpg)'
+        page3Background: `url(${require('./res/page3background.jpg')})`,
     }
 }

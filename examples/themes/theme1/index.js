@@ -5,6 +5,6 @@ export default {
 	},
   options: {
     cnName: '仅修改默认Home的样式',
-    page3Background: 'url(/themes/theme1/res/page3background.jpg)'
+    page3Background: `url(${require('./res/page3background.jpg')})`,
   }
 }

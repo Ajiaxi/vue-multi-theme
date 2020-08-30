@@ -14,7 +14,6 @@
 
 * 本插件适合主题量大、主题间差异巨大的项目。由于较灵活，所有可能上手会比较慢，我尽量将案例写完善。
 * 本插件是这几天刚做出来的，有些Bug可能没能及时测出来，若使用过程中有什么问题或意见可以通过[https://github.com/Ajiaxi/vue-multi-theme/issues](https://github.com/Ajiaxi/vue-multi-theme/issues)反馈， 我会抽时间看，当然不一定能马上改，除非很致命的bug。
-* 本插件还不支持为同主题组件加载共用的样式，后续应该会加，大家有什么好的建议也可以提出来。
 * 本插件使用环境：webpack+vue2.0
 * 本插件目前仅支持SPA应用，反馈好的话后续可能会研究对SSR的支持。
 * 本插件会一次性注册所有主题（但组件是动态加载的）意味着别人可能通过浏览器调试知道你的所有主题，如果你不愿意让别人知道你有哪些主题，可以先不使用；后续会考虑添加使用时注册支持。
@@ -28,49 +27,13 @@
 npm install vue-multi-theme -S
 ```
 
-
-## Step2 webpack配置
-
-vue.config.js
-
-```
-const path = require('path')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-module.exports = {
-    configureWebpack: {
-      plugins: [
-        new CopyWebpackPlugin([
-            {
-              context: path.resolve(__dirname, `src/themes`),
-              from: {
-                glob: '**/res/*',
-                dot: true
-              },
-              to: `themes`,
-              ignore: ['.*']
-            },
-          ])
-          ...
-      ]
-    }
-  }
-```
-
-**src/themes以你实际的目录为准**
-
-若提示没有安装copy-webpack-plugin，请执行以下命令安装
-
-```
-npm install --save-dev copy-webpack-plugin
-```
-
-## Step3 添加主题主目录
+## Step2 添加主题主目录
 
 在main.js所在的目录添加themes目录
 
 ![](documents/images/00.png)
 
-## Step4 注册插件
+## Step3 注册插件
 
 main.js
 
@@ -650,23 +613,20 @@ export default {
 
 这是默认主题Page3效果，此时我们想在theme1主题中改变这张图片，仅仅需要在theme1/index.js中这样设置：
 
+
 ```
 export default {
-  components: {
-    ...
-  },
-  options: {
-    ...
-    page3Background: 'url(/themes/theme1/res/page3background.jpg)'
+    components: {
+      Home: () => import('./components/Home')
+    },
+    options: {
+      page3Background: `url(${require('./res/page3background.jpg')})`,
+      cnName: '仅修改默认Home的样式' // 并且在这里添加上cnName字段（仅做示例，非必填）
+    }
   }
-}
 ```
 
 同时在themes/theme1/res中放入对应文件，将themeName改成theme1即可
-
-**注意这里的路径的写法，不能直接使用相对路径，因为编译时，会将/themes/theme1/res/中的文件原封不动的复制到dist目录中的对应位置。**
-
-**也因此添加图片后需要重新编译一下**
 
 运行效果
 
@@ -833,7 +793,9 @@ $ npm run serve
 
 # 七、结语
 
-以上示例只是起到抛砖引玉作用。前期不理解使用起来可能会有点费劲，有的人可能会绝得麻烦，但理解之后相信对你会有所帮助。传统的替换css和class name大法在后续版本考虑引入。不过现在这样对于大多数SPA项目应该也够用了。
+以上示例只是起到抛砖引玉作用。前期不理解使用起来可能会有点费劲，有的人可能会绝得麻烦，但理解之后相信对你会有所帮助。
+
+传统的替换css和class name大法有可能在后续版本考虑引入。不过不推荐这么做。现在这样对于大多数SPA项目应该也够用了。
 
 新写的插件，可能会有bug和不完善的地方，需要在真正的项目中去检验，有问题可以到[https://github.com/Ajiaxi/vue-multi-theme/issues](https://github.com/Ajiaxi/vue-multi-theme/issues)反馈，我有空的话，想办法解决。
 
