@@ -31,28 +31,32 @@ npm install vue-multi-theme -S
 
 ## Step2 webpack配置
 
+vue.config.js
+
 ```
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-...
-{
-    plugins: [
-      new CopyWebpackPlugin([
-        {
-          context: path.resolve(__dirname, `src/themes`),
-          from: {
-            glob: '**/res/*',
-            dot: true
-          },
-          to: `themes`,
-          ignore: ['.*']
-        },
-      ])
-    ]
-}
+module.exports = {
+    configureWebpack: {
+      plugins: [
+        new CopyWebpackPlugin([
+            {
+              context: path.resolve(__dirname, `src/themes`),
+              from: {
+                glob: '**/res/*',
+                dot: true
+              },
+              to: `themes`,
+              ignore: ['.*']
+            },
+          ])
+          ...
+      ]
+    }
+  }
 ```
 
-**注意这里的examples/themes以你实际的目录为准**
+**src/themes以你实际的目录为准**
 
 若提示没有安装copy-webpack-plugin，请执行以下命令安装
 
@@ -727,6 +731,7 @@ export default {
   name: 'App',
 }
 </script>
+...
 ```
 
 * Home在不同主题中都有定义，因此这里使用了ThemeRender来渲染，themeRouteProps的第一个参数是在当前主题中查找Home组件(对应\__component)，第二个参数是如果没找到第一个参数在主题中的组件时，要渲染的默认组件(对应\__default)，第三个参为其它props（如果有的话）
