@@ -201,6 +201,8 @@ export default {
 }
 ```
 
+备注：import('./components/Home')返回的是一个Promise对象
+
 此时，我们的第一个主题就创建完成了。
 
 ## Step 3 使用主题
@@ -702,7 +704,7 @@ export default {
 
 Header.vue
 
-```
+```js
 <template>
     <header>
         <ul>
@@ -769,7 +771,7 @@ li a {
 
 将Header注册成全局的
 main.js
-```
+```js
 import Header from './components/Header'
 ...
 Vue.component('Header', Header)
@@ -781,17 +783,139 @@ Vue.component('Header', Header)
 
 我们可以通过三个链接选择不同页面，同时可以通过主题下拉框查看页面在不同主题的效果。
 
-# 六、下载示例
+# 六、传统替换class名称方式多主题支持(v0.1.3)
+
+有些公共样式在同一主题中很多地方都有用到，且仅仅是样式的区别；这时我们还可以用传统的方式来设置多主题。
+
+为展示这个用法，我们在./components中添加了Page4.vue：
+
+```js
+<template>
+  <div>
+    <Header/>
+    <h3>传统替换样式文件实现多主题，当前主题色</h3>
+    <div class="current-theme-color"></div>
+    <div>当前主题参数：{{JSON.stringify(themeOptions, null, 2)}}</div>
+  </div>
+</template>
+
+<script>
+export default {
+}
+</script>
+
+<style scoped>
+.current-theme-color {
+    width: 533px;
+    height: 300px;
+    margin: auto;
+    border: 1px solid #666;
+}
+</style>
+```
+
+我们希望当我们选择theme1主题的时候，加载一个css文件来设置current-theme-color的值，首先我们在theme1目录中添加base.css:
+
+```css
+.theme-theme1 .current-theme-color {
+    background: red;
+}
+```
+
+然后修改theme1/index.js:
+
+```js
+export default {
+  components: {
+	...
+  },
+  options: {
+	...
+  },
+   styles: [() => import('./base.css')],
+}
+
+```
+
+这样当我们选择样式的时候，current-theme-color就会显示成红色，这是应为当我们设置主题时，插件会将body的className设置为“**theme-主题名**”，也因此base.css中的**样式一定要注意和这个className的联系**。
+
+**注意：这种方式是支持热加载的，也就是说改了样式马上就能看到效果**
+
+你还可以使用less、stylus等预编译样式：
+
+```js
+styles: [() => import('./base.less')]
+或
+styles: [() => import('./base.styl')]
+```
+
+当然，前提是webpack要配置好相关的loader。
+
+效果：
+
+![](documents/images/12.png)
+
+![](documents/images/13.png)
+
+
+# 七、ElementUI、iView、Vux等动态主题支持(v0.1.3)
+
+ElementUI、iView、Vux等UI框架的样式在多是用less编写的，同时官方也提供了修改主题的方法，但并没有提供动态加载的方法。
+
+以ElementUI为例，我们打算当选择theme1时，ElementUI的color-primary变成红色。为达成这个目标，我们首先在public目录创建一个element-themes子目录（名字可以自已取）:
+
+![](documents/images/14.png)
+
+然后我们用ElementUI官方提供的方法分别生成一个默认的index.css和一个color-primary为红色的red.css放在这个目录里面：
+
+
+![](documents/images/15.png)
+
+接着我们修改插件加载参数：
+
+main.js
+
+```js
+...
+Vue.use(VueMultiTheme, {
+  ...
+  onThemeChange: (themeOptions, loadExternalCss) => {
+
+    let cssFile = 'index.css'
+
+    // 如果主题是theme1，则ElementUI加载红色主题
+    // 当然你也可以通过其它自定义的主题参数来确定要加载哪个文件
+    if (themeOptions.name === 'theme1') {
+      cssFile = 'red.css'
+    }
+    // 加载外部css到指定ID的link上，如果link已存在，则删除重建
+    loadExternalCss('element-theme-link', `/element-themes/${cssFile}`)
+  }
+  ...
+})
+...
+```
+
+当我们切换主题时，会执行onThemeChange这个回调（如果有指定的话），它传入两个参数，一个是切换后的主题参数themeOptions，和用于加载外部css文件的函数loadExternalCss，它的功能是加载外部css到指定ID的link上，如果link已存在，则删除重建。第一个参数是link的id，第二个参数为css文件路径，运行效果：
+
+![](documents/images/16.png)
+
+![](documents/images/17.png)
+
+iView、Vux同理。利用这个回调函数，我们还可以做很多事情。
+
+
+# 八、下载示例
 
 以上示例都在：[https://github.com/Ajiaxi/vue-multi-theme/examples](https://github.com/Ajiaxi/vue-multi-theme/examples)中，可以下载项目并运行。
 
 运行示例：
 
-```
+```bash
 $ npm run serve
 ```
 
-# 七、结语
+# 九、结语
 
 以上示例只是起到抛砖引玉作用。前期不理解使用起来可能会有点费劲，有的人可能会绝得麻烦，但理解之后相信对你会有所帮助。
 
