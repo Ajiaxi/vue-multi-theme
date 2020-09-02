@@ -11,6 +11,7 @@ const Theme = {
     currentTheme: {}, // 当前主题
     currentOptions: {}, // 当前主题参数
     _vm: null,
+    _onThemeChange: null,
 
     /** 
      * 初始化主题管理器
@@ -18,8 +19,9 @@ const Theme = {
      * @param {Object} themeConfigs 包含所有主题的index.js对象的对象集
      * @param {string} themeName 默认要加载的主题名称
      * @param {Object} themeOptions 默认要加载的主题的参数
+     * @param {function} onThemeChange 当主题发生变化时的回调
      */
-    init: function (Vue, themeConfigs, themeName, themeOptions = {}) {
+    init: function (Vue, themeConfigs, themeName, themeOptions = {}, onThemeChange = null) {
         if (this._vm == null) {
             this._vm = new Vue({
                 data: {
@@ -27,6 +29,7 @@ const Theme = {
                 }
             })
         }
+        this._onThemeChange = onThemeChange
         this.themeConfigs = themeConfigs
         this.setTheme(themeName, themeOptions)
     },
@@ -52,14 +55,28 @@ const Theme = {
                 }
                 theme.options = Object.assign(themeConfig.options, options ? options : {})
                 theme.options.name = name
-                theme.options.cssRoot = 'theme-' + name // 样式前缀
+                theme.options.cssRootClass = 'theme-' + name // 样式前缀
                 this.themes[name] = theme
+                if (themeConfig.styles) {
+                    themeConfig.styles.forEach(style => {
+                        if (style && typeof style == 'function') {
+                            style() // 加载主样式
+                        }
+                    });
+                }
             }
         } else {
             theme.options = Object.assign(theme.options, options)
         }
+        if (theme) {
+            document.body.className = theme.options.cssRootClass
+        }
+        
         this.setOptions(theme ? theme.options : {}, true)
         this.currentTheme = theme
+        if (this._onThemeChange) {
+            this._onThemeChange(this.getOptions(), this.__loadExternalCss)
+        }
     },
 
     /**
@@ -106,6 +123,27 @@ const Theme = {
 
         return componentInst
     },
+
+    /**
+     * 加载外部css到指定ID的link上，如果ID已存在，则删除重建
+     * @param {string} id link的id
+     * @param {string} path css文件的路径
+     */
+    __loadExternalCss: function(id, path) {
+        if (id == null || id === '') {
+            return
+        }
+        let linnk = document.getElementById('element-theme-link')
+        if (linnk) {
+            linnk.remove()
+        }
+        linnk = document.createElement('link')
+        linnk.id = id + ''
+        linnk.rel = 'stylesheet'
+        linnk.type = 'text/css'
+        linnk.href = path
+        document.getElementsByTagName('head')[0].appendChild(linnk)
+    }
 }
 
 export default Theme;

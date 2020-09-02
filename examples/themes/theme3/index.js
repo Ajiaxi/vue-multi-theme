@@ -6,5 +6,6 @@ export default {
     options: {
         cnName: '重定义按钮的行为',
         page3Background: `url(${require('./res/page3background.jpg')})`,
-    }
+    },
+    styles: [() => import('./base.styl')]
 }

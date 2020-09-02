@@ -6,5 +6,6 @@ export default {
     options: {
         cnName: '仅修改默认Home的template',
         page3Background: `url(${require('./res/page3background.jpg')})`,
-    }
+    },
+    styles: [() => import('./base.less')]
 }

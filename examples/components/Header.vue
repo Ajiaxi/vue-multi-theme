@@ -1,9 +1,11 @@
 <template>
     <header>
         <ul>
-            <li><router-link to="/">首页(整个页面做多主题)</router-link></li>
+            <li><router-link to="/">首页(配合Vue Router)</router-link></li>
             <li><router-link to="page2">页面2（仅页面内组件做多主题）</router-link></li>
             <li><router-link to="page3">页面3（仅通过主题参数实现多主题）</router-link></li>
+            <li><router-link to="page4">页面4（替换body的class）</router-link></li>
+            <li><router-link to="page5">页面5（修改ElementUI主题）</router-link></li>
         </ul>
         请选择主题
         <select v-model="themeName">
@@ -46,9 +48,6 @@ export default {
 header {
   line-height: 40px;
   border-bottom: 1px solid #ccc;
-}
-ul, select {
-    display: inline-block;
 }
 li {
     display: inline-block;

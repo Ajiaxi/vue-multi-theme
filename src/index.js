@@ -15,7 +15,8 @@ export default {
      * 主题插件初始化
      * @param {Object|webpackContext} options.themeConfigs 主题根目录的index.js对象或者是指向themes子目录的require.context对象包含所有主题信息
      * @param {string} options.themeName 默认主题名称
-     * @param {Object} options.themeOptions 主题参数 
+     * @param {Object} options.themeOptions 主题参数
+     * @param {function} options.onThemeChange 当主题发生变化时的回调
      */
     install: function(Vue, options = {}) {
     
@@ -27,7 +28,7 @@ export default {
             options.themeConfigs = themeWebpackContextPaser(options.themeConfigs)
         }
 
-        Theme.init(Vue, options.themeConfigs, options.themeName, options.themeOptions)
+        Theme.init(Vue, options.themeConfigs, options.themeName, options.themeOptions, options.onThemeChange)
         Vue.component('ThemeRender', ThemeRender)
         
         Vue.mixin({
