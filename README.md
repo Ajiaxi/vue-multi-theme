@@ -23,7 +23,7 @@
 
 ## Step1 安装
 
-```
+```bash
 npm install vue-multi-theme -S
 ```
 
@@ -37,7 +37,7 @@ npm install vue-multi-theme -S
 
 main.js
 
-```
+```js
 ...
 import VueMultiTheme from 'vue-multi-theme'
 ...
@@ -77,7 +77,7 @@ Vue.use(VueMultiTheme, {
 
 Home.vue内容如下：
 
-```
+```js
 <template>
   <div>
     <h1>默认界面：{{msg}} 当前主题 {{themeOptions.name}} {{themeOptions.cnName}}</h1>
@@ -111,7 +111,7 @@ h1 {
 
 App.vue内容如下：
 
-```
+```js
 <template>
   <div id="app">
     <Home/>
@@ -162,7 +162,7 @@ export default {
 
 其中index.js内容如下
 
-```
+```js
 export default {
   components: {
   },
@@ -180,7 +180,7 @@ export default {
 
 我们在theme1/components目录中创建Home.vue, 内容如下：
 
-```
+```js
 <script>
 import Home from '../../../components/Home'
 export default {
@@ -190,7 +190,7 @@ export default {
 ```
 可以看到，这里通过Vue的extends继承了默认的Home。此时，我们就在theme1主题中添加了一个和原来的Home.vue一模一样的组件，然后将这个组件添加到theme1/index.js中：
 
-```
+```js
 export default {
   components: {
     Home: () => import('./components/Home')
@@ -211,7 +211,7 @@ export default {
 
 main.js
 
-```
+```js
 Vue.use(VueMultiTheme, {
   themeConfigs: require.context(
     './themes',
@@ -223,7 +223,7 @@ Vue.use(VueMultiTheme, {
 ```
 这样我们就默认加载theme1主题了。接下来修改App.vue内容
 
-```
+```js
 <template>
   <div id="app">
     <ThemeRender __component="Home" :__default="home()" msg="哈哈，这是一条消息"/>
@@ -242,13 +242,13 @@ export default {
 ```
 将原来的
 
-```
+```html
 <Home/>
 ```
 
 修改为
 
-```
+```html
 <ThemeRender __component="Home" :__default="home()" msg="哈哈，这是一条消息"/>
 ```
 
@@ -269,7 +269,7 @@ export default {
 
 假设我们要在theme1的Home中将上面蓝色的文字改成红色，由于theme1的Home是从點认的Home继承过来的，因此我们完全可以重写它样式：
 
-```
+```js
 <script>
 import Home from '../../../components/Home'
 export default {
@@ -296,7 +296,7 @@ h1 {
 
 我们将theme1目录复制一分出来，取名theme2。同理，由于theme2的Home是从點认的Home继承过来的，因此我们完全可以重写模板(template)：
 
-```
+```js
 <template>
   <div>
     <h3>你好，我是主题 {{themeOptions.name}} 的Home</h3>
@@ -335,7 +335,7 @@ ul {
 
 main.js
 
-```
+```js
 Vue.use(VueMultiTheme, {
   themeConfigs: require.context(
     './themes',
@@ -353,7 +353,7 @@ Vue.use(VueMultiTheme, {
 
 我们打算改变Home中"按钮1"的行为。依然将theme1目录复制一分出来，取名theme3，修改Home.vue代码如下：
 
-```
+```js
 <script>
 import Home from '../../../components/Home'
 export default {
@@ -369,7 +369,7 @@ export default {
 
 theme3/index.js内容如下
 
-```
+```js
 export default {
     components: {
         Home: () => import('./components/Home')
@@ -384,7 +384,7 @@ export default {
 
 main.js
 
-```
+```js
 Vue.use(VueMultiTheme, {
   themeConfigs: require.context(
     './themes',
@@ -412,7 +412,7 @@ Vue.use(VueMultiTheme, {
 我们在components目录中新建一个Page2.vue文件，内容如下：
 
 Page2.vue
-```
+```js
 <template>
   <div>
     <div>页面2</div>
@@ -447,7 +447,7 @@ export default {
 
 Component1.vue
 
-```
+```js
 <template>
     <div class="com1">
         <h3>这是默认主题的组件1</h3>
@@ -481,7 +481,7 @@ Component1.vue
 
 修改App.vue
 
-```
+```js
 <template>
   <div id="app">
     <Page2/>
@@ -502,7 +502,7 @@ export default {
 可以看到，这里并没有使用ThemeRender来渲染Page2，因为Page2仅仅是里面的Component1需要做多主题，你可以在theme1中添加这个Component1组件：
 
 themes/theme1/components/Component1.vue
-```
+```js
 <template>
     <div class="com1">
         <h3>这是主题1的组件1</h3>
@@ -529,7 +529,7 @@ themes/theme1/components/Component1.vue
 
 然后在theme1/index.js中注册这个组件
 
-```
+```js
 export default {
   components: {
     Home: () => import('./components/Home'),
@@ -560,7 +560,7 @@ theme1的Component1效果
 
 Page3.vue
 
-```
+```js
 <template>
   <div>
     <div class="page3" :style="{backgroundImage:themeOptions.page3Background}">
@@ -591,7 +591,7 @@ export default {
 
 修改App.vue
 
-```
+```js
 <template>
   <div id="app">
     <Page3/>
@@ -616,7 +616,7 @@ export default {
 这是默认主题Page3效果，此时我们想在theme1主题中改变这张图片，仅仅需要在theme1/index.js中这样设置：
 
 
-```
+```js
 export default {
     components: {
       Home: () => import('./components/Home')
@@ -638,7 +638,7 @@ export default {
 
 我们已经创建了页面多主题的Home.vue、页面中部分组件多题的Page2.vue、以及通过主题参数实现多主题的Page3.vue;接下来我们要通过router把它们串起来，方便看整体效果。
 
-```
+```bash
 npm install vue-router -S
 ```
 
@@ -646,7 +646,7 @@ npm install vue-router -S
 在这里插件为需要直接在route.js中配置多主题的页面提供了themeRouteProps方法，具体用法如下：
 
 routes.js
-```
+```js
 import {themeRouteProps, ThemeRender} from 'vue-multi-theme'
 import Home from './components/Home'
 import Page2 from './components/Page2'
@@ -660,7 +660,7 @@ export default [
 ```
 
 main.js
-```
+```js
 ...
 import VueRouter from 'vue-router'
 import routes from './routes'
@@ -681,7 +681,7 @@ new Vue({
 
 App.vue
 
-```
+```js
 <template>
   <div id="app">
     <router-view/>
