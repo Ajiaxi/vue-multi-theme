@@ -42,35 +42,30 @@ const Theme = {
      * @param {Object} options 主题参数
      */
     setTheme: function(name, options) {
-        
+        let mergeOptions = options ? options : {}
         let theme = this.themes[name]
         if (theme == null) {
             const themeConfig = this.themeConfigs[name]
             if (themeConfig) {
                 theme = {
                     name,
-                    config: Object.assign(themeConfig),
-                    loaded: false
+                    components: themeConfig.components ? themeConfig.components : {},
+                    loaded: false,
+                    defaultOptions: themeConfig.options ? themeConfig.options : {},
+                    styles: themeConfig.styles ? themeConfig.styles : [],
+                    externalCss: themeConfig.externalCss ? themeConfig.externalCss : []
                 }
-                if (theme.config.components == null) {
-                    theme.config.components = {}
-                }
-                theme.options = Object.assign(themeConfig.options, options ? options : {})
-                theme.options.name = name
-                theme.options.bodyClass = 'theme-' + name // 样式前缀
+                theme.defaultOptions.name = name
+                theme.defaultOptions.bodyClass = 'theme-' + name // 样式前缀
+                theme.styles.forEach(style => {
+                    if (style && typeof style == 'function') {
+                        style() // 加载主样式
+                    }
+                });
                 this.themes[name] = theme
-                if (themeConfig.styles) {
-                    themeConfig.styles.forEach(style => {
-                        if (style && typeof style == 'function') {
-                            style() // 加载主样式
-                        }
-                    });
-                }
             }
-        } else {
-            theme.options = Object.assign(theme.options, options)
         }
-
+        
         // 外部CSS处理
         const oldExternalCss = this._currentExternalCss ? this._currentExternalCss : []
         for (let i = 0; i < oldExternalCss.length; i++) {
@@ -78,8 +73,9 @@ const Theme = {
         }
         this._currentExternalCss = []
         if (theme) {
-            document.body.className = theme.options.bodyClass
-            this._currentExternalCss = theme.config.externalCss ? theme.config.externalCss : []
+            mergeOptions = Object.assign(cloneConfig(theme.defaultOptions), mergeOptions)
+            document.body.className = theme.defaultOptions.bodyClass
+            this._currentExternalCss = theme.externalCss
         }
         for (let i = 0; i < this._currentExternalCss.length; i++) {
             this._loadExternalCss(
@@ -88,7 +84,8 @@ const Theme = {
             )
         }
 
-        this.setOptions(theme ? theme.options : {}, true)
+        // 设置主题参数
+        this.setOptions(mergeOptions, true)
         this.currentTheme = theme
         if (this._onThemeChanged) {
             this._onThemeChanged(this.getOptions(), this)
@@ -127,12 +124,12 @@ const Theme = {
         let componentInst = null
 
         if (this.currentTheme) {
-            componentInst = this.currentTheme.config.components[componentName]
-            if (this.currentTheme.config.components && !this.currentTheme.loaded) {
+            componentInst = this.currentTheme.components[componentName]
+            if (this.currentTheme.components && !this.currentTheme.loaded) {
                 this.currentTheme.loaded = true
                  // 注册主题下的组件
-                for (let k in this.currentTheme.config.components) {
-                    this.currentTheme.config.components[k]()
+                for (let k in this.currentTheme.components) {
+                    this.currentTheme.components[k]()
                 }
             }
         }
@@ -170,6 +167,18 @@ const Theme = {
             link.remove()
         }
     }
+}
+
+const cloneConfig = (originCfg) => {
+    if (originCfg) return JSON.parse(JSON.stringify(originCfg))
+    return null
+    // const ret = originCfg.constructor === Array ? [] : {}
+    // for (var i in originCfg) {
+    //     if (originCfg.hasOwnProperty(i)) {
+    //         ret[i] = typeof originCfg[i] === 'object' ? this.deepCopy(originCfg[i]) : originCfg[i]
+    //     }
+    // }
+    // return ret
 }
 
 export default Theme;
