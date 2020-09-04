@@ -67,10 +67,7 @@ const Theme = {
         }
         
         // 外部CSS处理
-        const oldExternalCss = this._currentExternalCss ? this._currentExternalCss : []
-        for (let i = 0; i < oldExternalCss.length; i++) {
-            oldExternalCss[i].remove()
-        }
+        this._currentExternalCss.forEach(element => element.remove());
         this._currentExternalCss = []
         if (theme) {
             mergeOptions = Object.assign(cloneConfig(theme.defaultOptions), mergeOptions)
