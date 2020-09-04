@@ -57,7 +57,7 @@ const Theme = {
                 }
                 theme.options = Object.assign(themeConfig.options, options ? options : {})
                 theme.options.name = name
-                theme.options.cssRootClass = 'theme-' + name // 样式前缀
+                theme.options.bodyClass = 'theme-' + name // 样式前缀
                 this.themes[name] = theme
                 if (themeConfig.styles) {
                     themeConfig.styles.forEach(style => {
@@ -78,7 +78,7 @@ const Theme = {
         }
         this._currentExternalCss = []
         if (theme) {
-            document.body.className = theme.options.cssRootClass
+            document.body.className = theme.options.bodyClass
             this._currentExternalCss = theme.config.externalCss ? theme.config.externalCss : []
         }
         for (let i = 0; i < this._currentExternalCss.length; i++) {
@@ -149,12 +149,12 @@ const Theme = {
         if (id == null || id.length == 0) {
             return
         }
-        linnk = document.createElement('link')
-        linnk.id = id + ''
-        linnk.rel = 'stylesheet'
-        linnk.type = 'text/css'
-        linnk.href = path
-        document.getElementsByTagName('head')[0].appendChild(linnk)
+        const link = document.createElement('link')
+        link.id = id + ''
+        link.rel = 'stylesheet'
+        link.type = 'text/css'
+        link.href = path
+        document.getElementsByTagName('head')[0].appendChild(link)
     },
 
     /**
@@ -165,9 +165,9 @@ const Theme = {
         if (id == null || id === '') {
             return
         }
-        let linnk = document.getElementById(id + '')
-        if (linnk) {
-            linnk.remove()
+        const link = document.getElementById(id + '')
+        if (link) {
+            link.remove()
         }
     }
 }
