@@ -91,7 +91,7 @@ const Theme = {
         this.setOptions(theme ? theme.options : {}, true)
         this.currentTheme = theme
         if (this._onThemeChanged) {
-            this._onThemeChanged(this.getOptions(), this._loadExternalCss)
+            this._onThemeChanged(this.getOptions(), this)
         }
     },
 
@@ -146,12 +146,8 @@ const Theme = {
      * @param {string} path css文件的路径
      */
     _loadExternalCss: function(id, path) {
-        if (id == null || id === '') {
+        if (id == null || id.length == 0) {
             return
-        }
-        let linnk = document.getElementById('element-theme-link')
-        if (linnk) {
-            linnk.remove()
         }
         linnk = document.createElement('link')
         linnk.id = id + ''

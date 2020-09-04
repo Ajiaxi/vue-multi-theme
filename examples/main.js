@@ -16,7 +16,7 @@ Vue.use(VueMultiTheme, {
     true,
     /\/.*\/index\.js$/
   ),
-  onThemeChanged: (/*themeOptions, loadExternalCss*/) => {
+  onThemeChanged: (/*themeOptions*/) => {
   }
   // themeName: 'theme3'
 })

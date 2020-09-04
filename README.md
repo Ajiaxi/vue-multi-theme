@@ -40,7 +40,7 @@ Vue.use(VueMultiTheme, {
 |themeConfigs|要注册的主题列表，可以是对象{theme1:import theme1/index.js，theme2:import theme2/index.js}(伪代码)，或像上面那样用webpack的require.context传入（推荐）|YES|
 |themeName|设置当前要渲染的主题。若不填，则渲染默认主题；可以通过调用组件的this.$setTheme修改，修改后界面自动更新|NO|
 |themeOptions|主题参数，若设置会覆盖默认主题参数的对应字段，所有组件可以通过this.themeOptions获取当前主题的参数；也可以在组件中调用this.$setThemeOptions修改主题参数，修改后界面自动更新|NO|
-|onThemeChanged|切换主题完成后的回调，参数1为新主题的参数，参数2为一个加载外部css的函数|NO|
+|onThemeChanged|切换主题完成后的回调，参数1为新主题的参数，参数2为主题管理对象|NO|
 
 
 ## Step4 创建主题
