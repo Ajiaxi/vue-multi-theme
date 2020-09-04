@@ -8,4 +8,5 @@ export default {
     page3Background: `url(${require('./res/page3background.jpg')})`,
   },
    styles: [() => import('./base.css')],
+   externalCss: ['/element-themes/red.css']
 }

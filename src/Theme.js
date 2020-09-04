@@ -10,8 +10,10 @@ const Theme = {
     themes: {}, // 主题的组件列表
     currentTheme: {}, // 当前主题
     currentOptions: {}, // 当前主题参数
+    _currentExternalCss: [],
+    _themeExternalCssPrefix: 'theme_external_css_',
     _vm: null,
-    _onThemeChange: null,
+    _onThemeChanged: null,
 
     /** 
      * 初始化主题管理器
@@ -19,9 +21,9 @@ const Theme = {
      * @param {Object} themeConfigs 包含所有主题的index.js对象的对象集
      * @param {string} themeName 默认要加载的主题名称
      * @param {Object} themeOptions 默认要加载的主题的参数
-     * @param {function} onThemeChange 当主题发生变化时的回调
+     * @param {function} onThemeChanged 当主题发生变化时的回调
      */
-    init: function (Vue, themeConfigs, themeName, themeOptions = {}, onThemeChange = null) {
+    init: function (Vue, themeConfigs, themeName, themeOptions = {}, onThemeChanged = null) {
         if (this._vm == null) {
             this._vm = new Vue({
                 data: {
@@ -29,7 +31,7 @@ const Theme = {
                 }
             })
         }
-        this._onThemeChange = onThemeChange
+        this._onThemeChanged = onThemeChanged
         this.themeConfigs = themeConfigs
         this.setTheme(themeName, themeOptions)
     },
@@ -68,14 +70,28 @@ const Theme = {
         } else {
             theme.options = Object.assign(theme.options, options)
         }
+
+        // 外部CSS处理
+        const oldExternalCss = this._currentExternalCss ? this._currentExternalCss : []
+        for (let i = 0; i < oldExternalCss.length; i++) {
+            this._removeExternalCss(this._themeExternalCssPrefix + i)
+        }
+        this._currentExternalCss = []
         if (theme) {
             document.body.className = theme.options.cssRootClass
+            this._currentExternalCss = theme.config.externalCss ? theme.config.externalCss : []
         }
-        
+        for (let i = 0; i < this._currentExternalCss.length; i++) {
+            this._loadExternalCss(
+                this._themeExternalCssPrefix + i,
+                this._currentExternalCss[i]
+            )
+        }
+
         this.setOptions(theme ? theme.options : {}, true)
         this.currentTheme = theme
-        if (this._onThemeChange) {
-            this._onThemeChange(this.getOptions(), this.__loadExternalCss)
+        if (this._onThemeChanged) {
+            this._onThemeChanged(this.getOptions(), this._loadExternalCss)
         }
     },
 
@@ -129,7 +145,7 @@ const Theme = {
      * @param {string} id link的id
      * @param {string} path css文件的路径
      */
-    __loadExternalCss: function(id, path) {
+    _loadExternalCss: function(id, path) {
         if (id == null || id === '') {
             return
         }
@@ -143,6 +159,20 @@ const Theme = {
         linnk.type = 'text/css'
         linnk.href = path
         document.getElementsByTagName('head')[0].appendChild(linnk)
+    },
+
+    /**
+     * 删除已加载的外部CSS
+     * @param {string} id link标签的id
+     */
+    _removeExternalCss: function(id) {
+        if (id == null || id === '') {
+            return
+        }
+        let linnk = document.getElementById(id + '')
+        if (linnk) {
+            linnk.remove()
+        }
     }
 }
 

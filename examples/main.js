@@ -16,17 +16,7 @@ Vue.use(VueMultiTheme, {
     true,
     /\/.*\/index\.js$/
   ),
-  onThemeChange: (themeOptions, loadExternalCss) => {
-
-    let cssFile = 'index.css'
-
-    // 如果主题是theme1，则ElementUI加载红色主题
-    // 当然你也可以通过其它自定义的主题参数来确定要加载哪个文件
-    if (themeOptions.name === 'theme1') {
-      cssFile = 'red.css'
-    }
-    // 加载外部css到指定ID的link上，如果ID的link已存在，则删除重建
-    loadExternalCss('element-theme-link', `/element-themes/${cssFile}`)
+  onThemeChanged: (/*themeOptions, loadExternalCss*/) => {
   }
   // themeName: 'theme3'
 })
