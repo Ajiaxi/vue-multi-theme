@@ -118,7 +118,7 @@ const Theme = {
 
         if (this.currentTheme) {
             componentInst = this.currentTheme.components[componentName]
-            if (this.currentTheme.components && !this.currentTheme.loaded) {
+            if (!this.currentTheme.loaded) {
                 this.currentTheme.loaded = true
                  // 注册主题下的组件
                 for (let k in this.currentTheme.components) {
