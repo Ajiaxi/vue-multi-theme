@@ -69,21 +69,17 @@ const Theme = {
         // 外部CSS处理
         const oldExternalCss = this._currentExternalCss ? this._currentExternalCss : []
         for (let i = 0; i < oldExternalCss.length; i++) {
-            this._removeExternalCss(this._themeExternalCssPrefix + i)
+            oldExternalCss[i].remove()
         }
         this._currentExternalCss = []
         if (theme) {
             mergeOptions = Object.assign(cloneConfig(theme.defaultOptions), mergeOptions)
             document.body.className = theme.defaultOptions.bodyClass
-            this._currentExternalCss = theme.externalCss
+            theme.externalCss.forEach(element => {
+                this._currentExternalCss.push(this._loadExternalCss(element))
+            });
         }
-        for (let i = 0; i < this._currentExternalCss.length; i++) {
-            this._loadExternalCss(
-                this._themeExternalCssPrefix + i,
-                this._currentExternalCss[i]
-            )
-        }
-
+        
         // 设置主题参数
         this.setOptions(mergeOptions, true)
         this.currentTheme = theme
@@ -138,47 +134,22 @@ const Theme = {
     },
 
     /**
-     * 加载外部css到指定ID的link上，如果ID已存在，则删除重建
-     * @param {string} id link的id
+     * 加载外部css
      * @param {string} path css文件的路径
      */
-    _loadExternalCss: function(id, path) {
-        if (id == null || id.length == 0) {
-            return
-        }
+    _loadExternalCss: function(path) {
         const link = document.createElement('link')
-        link.id = id + ''
         link.rel = 'stylesheet'
         link.type = 'text/css'
         link.href = path
         document.getElementsByTagName('head')[0].appendChild(link)
-    },
-
-    /**
-     * 删除已加载的外部CSS
-     * @param {string} id link标签的id
-     */
-    _removeExternalCss: function(id) {
-        if (id == null || id === '') {
-            return
-        }
-        const link = document.getElementById(id + '')
-        if (link) {
-            link.remove()
-        }
+        return link
     }
 }
 
 const cloneConfig = (originCfg) => {
     if (originCfg) return JSON.parse(JSON.stringify(originCfg))
     return null
-    // const ret = originCfg.constructor === Array ? [] : {}
-    // for (var i in originCfg) {
-    //     if (originCfg.hasOwnProperty(i)) {
-    //         ret[i] = typeof originCfg[i] === 'object' ? this.deepCopy(originCfg[i]) : originCfg[i]
-    //     }
-    // }
-    // return ret
 }
 
 export default Theme;
